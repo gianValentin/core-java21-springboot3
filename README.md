@@ -2,7 +2,7 @@
 This project that contains the core with the technologies of java 21, spring boot 3, spring security 6 and JWT
 
 <p align="center">
-  <img src="loos.jpg" />
+  ![java21](https://github.com/gianValentin/core-java21-springboot3/assets/45782176/ec9753ef-ad2d-40ce-9aa3-5e0662766ce7)
 </p>
 
 <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
