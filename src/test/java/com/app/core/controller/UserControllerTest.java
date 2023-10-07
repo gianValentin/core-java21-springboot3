@@ -3,49 +3,34 @@ package com.app.core.controller;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.security.Security;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
 import com.app.core.config.ModelMapperConfig;
 import com.app.core.config.ValidationConfig;
 import com.app.core.entity.model.UserModel;
-import com.app.core.security.AuthenticationConfig;
 import com.app.core.security.JwtAuthenticationFilter;
-import com.app.core.security.SecurityConfig;
-import com.app.core.security.repository.SecurityUserRepository;
-import com.app.core.security.service.JwtService;
-import com.app.core.security.service.impl.DefaultJwtService;
 import com.app.core.service.UserService;
 import com.app.core.utils.CustomCodeException;
 
-@WebMvcTest(controllers = UserController.class, excludeAutoConfiguration = {
-		SecurityConfig.class,
-		AuthenticationConfig.class,
-		SecurityAutoConfiguration.class
-})
-@Import({ ValidationConfig.class })
-@AutoConfigureMockMvc(addFilters = false)
+@WebMvcTest(
+		controllers = UserController.class,
+		excludeFilters = @ComponentScan.Filter(
+				type = FilterType.ASSIGNABLE_TYPE,
+				classes = JwtAuthenticationFilter.class))
+@Import({ ValidationConfig.class, ModelMapperConfig.class})
 public class UserControllerTest {
 
 	private final String path = "/api/v1/user";
@@ -78,21 +63,24 @@ public class UserControllerTest {
 	final String USER_NON_EXISTING_EMAIL = "jesus@torres.com";
 
 	@BeforeEach
-	void serUp() {
+	void serUp() {		
 		createDemoPersist();
 	}
-
-	@WithMockUser
+	
 	@Test
-	public void findByNameIgnoreCaseFound() throws Exception {
+	@WithMockUser
+	@DisplayName("Find by name ignore case found")
+	public void findByNameIgnoreCaseFound() throws Exception {		
 		mockMvc.perform(
-				get(path.concat("/{name}/name"), USER_DEMO_ONE_NAME)
+				get(path.concat("/{name}/name"), USER_DEMO_ONE_NAME)						
 						.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
-				.andExpect(MockMvcResultMatchers.jsonPath("$.name").value("giancarlo"));
+				.andExpect(MockMvcResultMatchers.jsonPath("$.firstname").value("giancarlo"));
 	}
 
+	
 	@Test
+	@WithMockUser
 	@DisplayName("Find by name ignore case not found")
 	public void findByNameIgnoreCaseNotFound() throws Exception {
 		mockMvc.perform(
@@ -127,6 +115,6 @@ public class UserControllerTest {
 		Mockito.when(userService.getByName(USER_DEMO_ONE_NAME)).thenReturn(newUserOne);
 
 		// get all
-		Mockito.when(userService.getAll()).thenReturn(List.of(newUserOne, newUserTwo));
+		Mockito.when(userService.getAll()).thenReturn(List.of(newUserOne, newUserTwo));			
 	}
 }

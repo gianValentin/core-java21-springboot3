@@ -19,7 +19,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import com.app.core.entity.model.UserModel;
 
 @DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+/*
+ * @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+ */
 public class UserRepositoryTest {
 
 	@Autowired
