@@ -15,13 +15,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.test.context.TestPropertySource;
 
 import com.app.core.entity.model.UserModel;
 
 @DataJpaTest
-/*
- * @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
- */
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE) 
+@TestPropertySource(properties = {
+        "spring.datasource.url=jdbc:postgresql://localhost:5432/db_api_core",
+        "spring.datasource.username=postgres",
+        "spring.datasource.password=1234"
+})
 public class UserRepositoryTest {
 
 	@Autowired
